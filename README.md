@@ -18,3 +18,9 @@ To build the package:
 ```bash
 MINGW_INSTALLS=mingw32 makepkg-mingw -sCLf
 ```
+
+To Re-package:
+
+```bash
+MINGW_INSTALLS=mingw32 makepkg-mingw -RdLf
+```

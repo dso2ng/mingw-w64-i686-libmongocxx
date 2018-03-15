@@ -4,7 +4,7 @@ pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-libmongocxx"
 source gitver.sh && pkgver=$(get_latest_release mongodb/${_realname})
 pkgdesc="libmongocxx is a client library written in C++ for MongoDB. (mingw-w64)"
-pkgrel=1
+pkgrel=2
 arch=('any')
 license=('Apache')
 url="https://mongodb.github.io/mongo-cxx-driver/"
@@ -33,12 +33,11 @@ build() {
   cp -ar "${_srcpath}/build" "${_buildpath}"
   cd "${_buildpath}"
 
-# MSYS2_ARG_CONV_EXCL="-DCMAKE_INSTALL_PREFIX=;-DCMAKE_PREFIX_PATH=;-DLIBMONGOC_DIR=;-DLIBBSON_DIR=" \
-  MSYS2_ARG_CONV_EXCL="-DCMAKE_INSTALL_PREFIX=;-DCMAKE_PREFIX_PATH=" \
+  MSYS2_ARG_CONV_EXCL="-DCMAKE_INSTALL_PREFIX=" \
   ${MINGW_PREFIX}/bin/cmake \
     -G"MSYS Makefiles" \
-    "-DCMAKE_INSTALL_PREFIX=${MINGW_PREFIX}" \
     "-DCMAKE_PREFIX_PATH=${MINGW_PREFIX}" \
+    "-DCMAKE_INSTALL_PREFIX=${MINGW_PREFIX}" \
     "-DLIBMONGOC_DIR=${MINGW_PREFIX}" \
     "-DLIBBSON_DIR=${MINGW_PREFIX}" \
     "-DCMAKE_BUILD_TYPE=Release" \
@@ -52,12 +51,11 @@ build() {
   cp -ar "${_srcpath}/build" "${_buildpathstatic}"
   cd "${_buildpathstatic}"
 
-# MSYS2_ARG_CONV_EXCL="-DCMAKE_INSTALL_PREFIX=;-DCMAKE_PREFIX_PATH=;-DLIBMONGOC_DIR=;-DLIBBSON_DIR=" \
-  MSYS2_ARG_CONV_EXCL="-DCMAKE_INSTALL_PREFIX=;-DCMAKE_PREFIX_PATH=" \
+  MSYS2_ARG_CONV_EXCL="-DCMAKE_INSTALL_PREFIX=" \
   ${MINGW_PREFIX}/bin/cmake \
     -G"MSYS Makefiles" \
-    "-DCMAKE_INSTALL_PREFIX=${MINGW_PREFIX}" \
     "-DCMAKE_PREFIX_PATH=${MINGW_PREFIX}" \
+    "-DCMAKE_INSTALL_PREFIX=${MINGW_PREFIX}" \
     "-DLIBMONGOC_DIR=${MINGW_PREFIX}" \
     "-DLIBBSON_DIR=${MINGW_PREFIX}" \
     "-DCMAKE_BUILD_TYPE=Release" \
@@ -71,6 +69,9 @@ build() {
 package() {
   cd ${_buildpath}
   make DESTDIR=${pkgdir} install
+  pushd src/bsoncxx/third_party/EP_mnmlstc_core-prefix/src/EP_mnmlstc_core-build
+    make DESTDIR=${pkgdir} install
+  popd
 
   cd ${_buildpathstatic}
   make DESTDIR=${pkgdir} install
